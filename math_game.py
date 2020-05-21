@@ -30,23 +30,29 @@ for i in range(num_qs):
 
 elapsed = time.time() - start
 print ("You scored", score, "points.")
-print ("You took", elapsed, " seconds.")
+print ("You took", elapsed, "seconds.")
 
 dbFile = 'data.db'
 senConn = sqlite3.connect(dbFile)
 senConn.row_factory = sqlite3.Row
 senCur = senConn.cursor()
 
-#createStr  = "CREATE table senTable (date string, time real, level string)"
+#senCur.execute("DROP table senTable")
+#createStr  = "CREATE table senTable (date string, time real, score real, level string)"
 #senCur.execute(createStr)
 
 insertStr = "INSERT into senTable VALUES("
-insertStr += "'" + time.asctime()[:10] + "', " + str(elapsed) + ', ' + "'test'" + ')'
+insertStr += "'" + time.asctime()[:10] + "', " + str(elapsed) + ', ' + str(score) + ", 'mult" + str(upper_lim) + "')"
 senCur.execute(insertStr)
-senCur.execute("SELECT * FROM senTable")
+senCur.execute("SELECT *  FROM senTable WHERE date='" + time.asctime()[:10] + "';")
 data = senCur.fetchall()
+s = 0
+t = 0
 for x in data:
-    for y in x: 
-        print y
+    t += x[1]
+    s += x[2]
+    
+print ("Total score today:", int(s), "points")    
+print ("Total time today:", t, "seconds")
 senConn.commit()
 senConn.close()
